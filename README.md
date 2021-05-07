@@ -48,5 +48,5 @@ Choose **1** to Login to a Horizon Connection Server
 
 Choose **2** to return Horizon Sessions.  You will be prompted for the username to search for.  
 
-   ![Sessions](https://github.com/chrisdhalstead/manage-horizon-sessions-by-user/blob/main/Images/getsession.png)
+   ![Sessions](https://github.com/chrisdhalstead/manage-horizon-sessions-by-user/blob/main/Images/getsession.PNG)
 
