@@ -26,7 +26,7 @@ This is a PowerShell script that uses PowerCLI and the View-API to query Horizon
 Run `Manage-Horizon-Sessions-ByUser.ps1` 
 
 
-   ![Menu](https://github.com/chrisdhalstead/manage-horizon-sessions-by-user/blob/main/Images/mainmenu.PNG)
+   ![Menu](https://github.com/chrisdhalstead/manage-horizon-sessions-by-user/blob/main/Images/MainMenu.PNG)
 
    #### Login to Horizon Connection Server
 
