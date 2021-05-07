@@ -74,11 +74,21 @@ $sresult = $qSRv.QueryService_Query($hvServices,$query)
 
 $qsrv.QueryService_Deleteall($hvservices)
 
-$sresult
+if ($sresult.results.count -eq 0)
+{
+   write-host "No Sessions Found for " $sUserNameforSession
+    break   
+     }
+
+$suserID = $sresult.Results[0].id.id
+
+GetSessions($suserID)
 
 }
 
-Function GetSessions {
+
+
+Function GetSessions($suserID) {
     
     if ([string]::IsNullOrEmpty($hvServer))
     {
@@ -90,7 +100,11 @@ Function GetSessions {
     try {
 
       $query = New-Object "Vmware.Hv.QueryDefinition"
+      
+      $qFilter = New-object VMware.Hv.QueryFilterEquals -property @{'memberName' ='referenceData.user'; 'value' = $sUserID}
 
+      $query.Filter = $qFilter
+      
       $query.queryEntityType = 'SessionLocalSummaryView'
       
       $qSrv = New-Object "Vmware.Hv.QueryServiceService"
@@ -138,24 +152,46 @@ Function GetSessions {
     
     }
 
-#Add Local CSV for Session Data
-Add-Content -Path $script:mydocs\Sessions_$script:date.csv  -Value '"Session Start Time","Display Protocol","Username","Pool Name","Machine Name","Client Name","Client Type","Client Version","Client IP","Session Type","Session State","Location","Idle Duration"'
-  
-write-host "There are" $sresult.results.Count "total sessions"
+write-host "There are" $sresult.results.Count "total sessions for " $sUserNameforSession
 
 #Write results to table
 $ssessionoutput.Results | Format-table -AutoSize -Property @{Name = 'Session Start Time'; Expression = {$_.sessiondata.startTime}},@{Name = 'Display Protocol'; Expression = {$_.sessiondata.SessionProtocol}},@{Name = 'Username'; Expression = {$_.namesdata.username}},@{Name = 'Pool Name'; Expression = {$_.namesdata.desktopname}},@{Name = 'Machine Name'; Expression = {$_.namesdata.machineorrdsservername}}`
 ,@{Name = 'Client Name'; Expression = {$_.namesdata.clientname}},@{Name = 'Client Type'; Expression = {$_.namesdata.clienttype}},@{Name = 'Client Version'; Expression = {$_.namesdata.clientversion}},@{Name = 'Client IP'; Expression = {$_.namesdata.clientaddress}}`
 ,@{Name = 'Session Type'; Expression = {$_.sessiondata.sessiontype}},@{Name = 'Session State'; Expression = {$_.sessiondata.sessionstate}},@{Name = 'Location'; Expression = {$_.namesdata.securityGatewayLocation}},@{Name = 'Idle Duration'; Expression = {$_.sessiondata.IdleDuration}}
 
-#Write results to .CSV file
-$ssessionoutput.Results | Select-Object -Property @{Name = 'Session Start Time'; Expression = {$_.sessiondata.startTime}},@{Name = 'Display Protocol'; Expression = {$_.sessiondata.SessionProtocol}},@{Name = 'Username'; Expression = {$_.namesdata.username}},@{Name = 'Pool Name'; Expression = {$_.namesdata.desktopname}},@{Name = 'Machine Name'; Expression = {$_.namesdata.machineorrdsservername}}`
-,@{Name = 'Client Name'; Expression = {$_.namesdata.clientname}},@{Name = 'Client Type'; Expression = {$_.namesdata.clienttype}},@{Name = 'Client Version'; Expression = {$_.namesdata.clientversion}},@{Name = 'Client IP'; Expression = {$_.namesdata.clientaddress}}`
-,@{Name = 'Session Type'; Expression = {$_.sessiondata.sessiontype}},@{Name = 'Session State'; Expression = {$_.sessiondata.sessionstate}},@{Name = 'Location'; Expression = {$_.namesdata.securityGatewayLocation}},@{Name = 'Idle Duration'; Expression = {$_.sessiondata.IdleDuration}} | Export-Csv -path $script:mydocs\Sessions_$script:date.csv -NoTypeInformation
+Write-host "Would you like to logoff these sessions? (Default is No)" -ForegroundColor Yellow 
+    $Readhost = Read-Host " ( y / n ) " 
+    Switch ($ReadHost) 
+     { 
+       Y {Write-host "Logging Off Users' Sessions. This may take a few minutes.";Continue} 
+       N {Write-Host "Doing Nothing"; break} 
+       Default {Write-Host "Default, Do Nothing"; break} 
+     } 
+            
+      try {
+ 
+           foreach ($item in $ssessionoutput.results.id) 
+           
+           {
+            
+            write-host $item
 
-write-host "Horizon session data written to: $script:mydocs\Sessions_$script:date.csv"
+            $script:hvServices.session.Session_LogoffForced($item)
 
-} 
+           }        
+                  
+          }
+        
+        catch {
+        
+         Write-Host "An error occurred when logging on $_"
+         break 
+        
+        }
+       
+               
+}     
+
 
 function Show-Menu
   {
