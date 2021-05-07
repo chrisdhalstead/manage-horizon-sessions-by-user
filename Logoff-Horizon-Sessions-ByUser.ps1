@@ -155,38 +155,54 @@ $ssessionoutput.Results | Format-table -AutoSize -Property @{Name = 'Session Sta
 ,@{Name = 'Client Name'; Expression = {$_.namesdata.clientname}},@{Name = 'Client Type'; Expression = {$_.namesdata.clienttype}},@{Name = 'Client Version'; Expression = {$_.namesdata.clientversion}},@{Name = 'Client IP'; Expression = {$_.namesdata.clientaddress}}`
 ,@{Name = 'Session Type'; Expression = {$_.sessiondata.sessiontype}},@{Name = 'Session State'; Expression = {$_.sessiondata.sessionstate}},@{Name = 'Location'; Expression = {$_.namesdata.securityGatewayLocation}},@{Name = 'Idle Duration'; Expression = {$_.sessiondata.IdleDuration}}
 
-Write-host "Would you like to logoff these sessions? (Default is No)" -ForegroundColor Yellow 
-    $Readhost = Read-Host " ( y / n ) " 
-    Switch ($ReadHost) 
-     { 
-       Y {Write-host "Logging Off Users' Sessions. This may take a few minutes.";Continue} 
-       N {Write-Host "Doing Nothing";break} 
-       Default {Write-Host "Default, Do Nothing";break} 
-     } 
-            
-     try {
- 
-      foreach ($item in $ssessionoutput.results.id) 
-      
-      {
-       
-       write-host $item.id
+Write-Host "Press '1' to Logoff all sessions for "$sUserNameforSession
+Write-Host "Press '2' to exit without making changes"
+$selection = Read-Host "Please make a selection"
 
-       $script:hvServices.session.Session_LogoffForced($item)
+switch ($selection)
+{
 
-      }        
-             
-     }
-   
-   catch {
-   
-    Write-Host "An error occurred when logging on $_"
-    break 
-   
-   }      
-               
-}     
+'1' {  
 
+  foreach ($item in $sresult.Results) 
+  
+  {
+     ForceLogoff_User($item)
+  }
+
+
+    
+} 
+
+'2' {
+
+     break
+
+}
+
+}
+
+     
+                    
+}   
+
+function ForceLogoff_User {
+  param ($sessionid)
+  
+  try {
+              
+        
+     write-host $sessionid.id.id
+
+     $script:hvServices.session.Session_LogoffForced($sessionid.id)
+
+    }        
+           
+    catch {
+      Write-Host "An error occurred when logging on $_"
+     break 
+    }
+}
 
 function Show-Menu
   {
