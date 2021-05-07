@@ -1,14 +1,18 @@
 
 <#
 .SYNOPSIS
-Script to output Horizon Session data to .CSV via PowerCLI
+Script to manage Horizon Sessions by User
 	
 .NOTES
   Version:        1.1
   Author:         Chris Halstead - chalstead@vmware.com
-  Creation Date:  1/20/2021
-  Purpose/Change: Updated for > 1,000 sessions and added Session Start Time
-
+  Creation Date:  5/7/2021
+  Purpose/Change: Manage active sessions per user
+  
+  *Search for all sessions by username
+    *Logoff All Sessions for user
+    *Disconnect All Sessions for user
+    *Send a Message to All Sessions for user
   
  #>
 
@@ -155,8 +159,10 @@ $ssessionoutput.Results | Format-table -AutoSize -Property @{Name = 'Session Sta
 ,@{Name = 'Client Name'; Expression = {$_.namesdata.clientname}},@{Name = 'Client Type'; Expression = {$_.namesdata.clienttype}},@{Name = 'Client Version'; Expression = {$_.namesdata.clientversion}},@{Name = 'Client IP'; Expression = {$_.namesdata.clientaddress}}`
 ,@{Name = 'Session Type'; Expression = {$_.sessiondata.sessiontype}},@{Name = 'Session State'; Expression = {$_.sessiondata.sessionstate}},@{Name = 'Location'; Expression = {$_.namesdata.securityGatewayLocation}},@{Name = 'Idle Duration'; Expression = {$_.sessiondata.IdleDuration}}
 
-Write-Host "Press '1' to Logoff all sessions for "$sUserNameforSession
-Write-Host "Press '2' to exit without making changes"
+Write-Host "Press '1' to Logoff all sessions for"$sUserNameforSession
+Write-Host "Press '2' to Disconnect all sessions for"$sUserNameforSession
+Write-Host "Press '3' to Send a Message to all sessions for"$sUserNameforSession
+Write-Host "Press '4' to exit without making changes"
 $selection = Read-Host "Please make a selection"
 
 switch ($selection)
@@ -176,7 +182,30 @@ switch ($selection)
 
 '2' {
 
-     break
+  foreach ($item in $sresult.Results) 
+  
+  {
+     Disconnect_User($item)
+  }
+
+}
+
+'3' {
+
+ $smessage = Read-Host -Prompt 'Enter the message to send to the users sessions'
+
+  foreach ($item in $sresult.Results) 
+  
+  {
+     SendMessage_User $item $smessage
+  }
+
+}
+
+'4'
+{
+ 
+  break
 
 }
 
@@ -187,21 +216,54 @@ switch ($selection)
 }   
 
 function ForceLogoff_User {
-  param ($sessionid)
-  
+ 
   try {
-              
-        
-     write-host $sessionid.id.id
-
-     $script:hvServices.session.Session_LogoffForced($sessionid.id)
+             
+   
+     $script:hvServices.session.Session_LogoffForced($args[0].id)
 
     }        
            
     catch {
-      Write-Host "An error occurred when logging on $_"
+      Write-Host "An error occurred when Logging Off sessions $_"
      break 
     }
+
+    write-host "Logged off session" $args[0].id.id
+}
+
+function Disconnect_User {
+  
+  try {
+              
+   
+     $script:hvServices.session.Session_Disconnect($args[0].id)
+
+    }        
+           
+    catch {
+      Write-Host "An error occurred when disconnecting sessions $_"
+     break 
+    }
+
+    write-host "Disconnected Session " $args[0].id.id
+}
+
+function SendMessage_User {
+ 
+  try {
+  
+        $script:hvServices.session.Session_SendMessage($args[0].id,"INFO",$args[1])
+
+    }        
+           
+    catch {
+      Write-Host "An error occurred when sending a message $_"
+     break 
+    }
+
+  write-host "Message Sent to session " $args[0].id.id
+    
 }
 
 function Show-Menu
