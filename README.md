@@ -1,7 +1,7 @@
-# Horizon-Sessions
+# Manage-Horizon-Sessions-By-User
 Export VMware Horizon Session Data into .CSV
 
-This script will export Horizon Session data into a .CSV file in My Documents Folder.
+This script will allow you to list and manage the active Horizon sessions for a iunh
 
 ***<u>There is no support for this tool - it is provided as-is</u>***
 
@@ -11,23 +11,15 @@ Chris Halstead - Staff Architect, VMware
 Email: chalstead@vmware.com  
 Twitter: @chrisdhalstead  <br />
 
-Thanks to Wouter Kursten for the feedback on supporting over 1,000 sessions.  <br/>
+This script requires Horizon 7 PowerCLI - https://blogs.vmware.com/euc/2020/01/vmware-horizon-7-powercli.html <br/>
 
-The code to support that is based off of his post here:  https://www.retouw.nl/2017/12/12/get-hvmachine-only-finds-1000-desktops/ <br/>
-
- This script requires Horizon 7 PowerCLI - https://blogs.vmware.com/euc/2020/01/vmware-horizon-7-powercli.html <br/>
-
-Updated January 22, 2021<br />
-
-**Update to support over 1,000 Horizon Sessions**
+Updated May 7, 2021<br />
 
 ------
 
 ### Script Overview
 
 This is a PowerShell script that uses PowerCLI and the View-API to query Horizon sessions.  The session are written to a table in the script and also to a .CSV file that can be opened in Excel or a similar spreadsheet tool.
-
-- The .csv file is written to the My Documents folder of the user running the script.  The file format is: **Sessions_Month_Date_Year.csv**
 
 ### Script Usage
 
