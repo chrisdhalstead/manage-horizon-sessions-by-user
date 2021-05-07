@@ -1,6 +1,4 @@
 # Manage-Horizon-Sessions-By-User
-Export VMware Horizon Session Data into .CSV
-
 This script will allow you to list and manage the active Horizon sessions for a user
 
 ***<u>There is no support for this tool - it is provided as-is</u>***
