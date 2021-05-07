@@ -26,7 +26,7 @@ This is a PowerShell script that uses PowerCLI and the View-API to query Horizon
 Run `Manage-Horizon-Sessions-ByUser.ps1` 
 
 
-   ![Menu](https://github.com/chrisdhalstead/Manage-Horizon-Sessions-ByUser/blob/main/Images/mainmenu.PNG)
+   ![Menu](https://github.com/chrisdhalstead/manage-horizon-sessions-by-user/blob/main/Images/mainmenu.PNG)
 
    #### Login to Horizon Connection Server
 
@@ -42,11 +42,11 @@ Choose **1** to Login to a Horizon Connection Server
 
   You will see that you are now logged in to Horizon - click enter to go back to the menu
 
-   ![Login](https://github.com/chrisdhalstead/Manage-Horizon-Sessions-ByUser/blob/main/Images/Login.PNG)
+   ![Login](https://github.com/chrisdhalstead/manage-horizon-sessions-by-user/blob/main/Images/Login.PNG)
 
 #### Return Horizon Sessions
 
 Choose **2** to return Horizon Sessions.  You will be prompted for the username to search for.  
 
-   ![Sessions](https://github.com/chrisdhalstead/Manage-Horizon-Sessions-ByUser/blob/main/Images/getsession.png)
+   ![Sessions](https://github.com/chrisdhalstead/manage-horizon-sessions-by-user/blob/main/Images/getsession.png)
 
