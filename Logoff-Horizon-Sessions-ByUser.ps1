@@ -9,10 +9,6 @@ Script to output Horizon Session data to .CSV via PowerCLI
   Creation Date:  1/20/2021
   Purpose/Change: Updated for > 1,000 sessions and added Session Start Time
 
-  Thanks to Wouter Kursten for the guidance on returning more than 1,000 objects in this article:
-  https://www.retouw.nl/2017/12/12/get-hvmachine-only-finds-1000-desktops/
-
-  Also thanks to feedback on code.vmware.com I added Session Start Time
   
  #>
 
@@ -147,7 +143,7 @@ Function GetSessions($suserID) {
     
   if ($ssessionoutput.results.count -eq 0)
    {
-    write-host "No Sessions"
+    write-host "No Sessions for" $sUserNameforSession
     break   
     
     }
@@ -164,31 +160,30 @@ Write-host "Would you like to logoff these sessions? (Default is No)" -Foregroun
     Switch ($ReadHost) 
      { 
        Y {Write-host "Logging Off Users' Sessions. This may take a few minutes.";Continue} 
-       N {Write-Host "Doing Nothing"; break} 
-       Default {Write-Host "Default, Do Nothing"; break} 
+       N {Write-Host "Doing Nothing";break} 
+       Default {Write-Host "Default, Do Nothing";break} 
      } 
             
-      try {
+     try {
  
-           foreach ($item in $ssessionoutput.results.id) 
-           
-           {
-            
-            write-host $item
-
-            $script:hvServices.session.Session_LogoffForced($item)
-
-           }        
-                  
-          }
-        
-        catch {
-        
-         Write-Host "An error occurred when logging on $_"
-         break 
-        
-        }
+      foreach ($item in $ssessionoutput.results.id) 
+      
+      {
        
+       write-host $item.id
+
+       $script:hvServices.session.Session_LogoffForced($item)
+
+      }        
+             
+     }
+   
+   catch {
+   
+    Write-Host "An error occurred when logging on $_"
+    break 
+   
+   }      
                
 }     
 
